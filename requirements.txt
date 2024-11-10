@@ -2,4 +2,3 @@ streamlit
 pandas
 category_encoders
 scikit-learn
-pickle
