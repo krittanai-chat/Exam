@@ -27,9 +27,7 @@ def user_input_features():
         'flipper_length_mm': [flipper_length_mm],
         'body_mass_g': [body_mass_g],
         'island': [island],
-        'sex': [sex],
-        'culmen_length_mm': [None],  # Or provide a default value if needed
-        'culmen_depth_mm': [None]    # Or provide a default value if needed
+        'sex': [sex]
     })
 
     return input_data
@@ -37,11 +35,11 @@ def user_input_features():
 # Get user input
 input_df = user_input_features()
 
-# Ensure that the columns match the model's training data
-required_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g', 'island', 'sex', 'culmen_length_mm', 'culmen_depth_mm']
+# Ensure that the columns match the model's training data (only 6 expected features)
+required_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g', 'island', 'sex']
 input_df = input_df[required_columns]  # Ensure only the expected columns are included
 
-# Preprocessing: Apply categorical encoding and scaling
+# Preprocessing: Apply categorical encoding
 encoder = ce.OrdinalEncoder(cols=['island', 'sex'])
 input_df_encoded = encoder.fit_transform(input_df)  # Transform the data using the encoder
 
@@ -50,7 +48,7 @@ print(input_df_encoded.columns)  # Check the columns after encoding
 
 # Scale the numerical features (based on your model's training process)
 scaler = StandardScaler()
-numerical_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g', 'culmen_length_mm', 'culmen_depth_mm']
+numerical_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g']
 input_df_encoded[numerical_columns] = scaler.fit_transform(input_df_encoded[numerical_columns])
 
 # Make predictions based on the preprocessed input
