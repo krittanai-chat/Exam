@@ -1,63 +1,45 @@
-
 import streamlit as st
 import pandas as pd
+import pickle
 import category_encoders as ce
 from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
-import pickle
+from sklearn.pipeline import Pipeline
 
-# Title of the app
-st.title("Penguin Species Prediction")
+# Load the pre-trained model
+with open('model_penguin_66130701701.pkl', 'rb') as file:
+    model = pickle.load(file)
 
-# Upload the dataset
-uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+# Function to take user input for prediction
+def user_input_features():
+    # User input for numerical features
+    bill_length_mm = st.number_input('Bill Length (mm)', min_value=0.0, max_value=100.0, value=40.0)
+    bill_depth_mm = st.number_input('Bill Depth (mm)', min_value=0.0, max_value=100.0, value=20.0)
+    flipper_length_mm = st.number_input('Flipper Length (mm)', min_value=0.0, max_value=250.0, value=200.0)
+    body_mass_g = st.number_input('Body Mass (g)', min_value=0, max_value=10000, value=5000)
 
-if uploaded_file is not None:
-    # Load the dataset
-    df = pd.read_csv(uploaded_file)
+    # User input for categorical features
+    island = st.selectbox('Island', ['Torgersen', 'Biscoe', 'Dream'])
+    sex = st.selectbox('Sex', ['MALE', 'FEMALE'])
 
-    # Display the first few rows of the dataframe
-    st.write("Dataset Preview", df.head())
+    # Create a DataFrame with the input features
+    input_data = pd.DataFrame({
+        'bill_length_mm': [bill_length_mm],
+        'bill_depth_mm': [bill_depth_mm],
+        'flipper_length_mm': [flipper_length_mm],
+        'body_mass_g': [body_mass_g],
+        'island': [island],
+        'sex': [sex]
+    })
 
-    # Separate features and target
-    X = df.drop('species', axis=1)
-    y = df['species']
+    return input_data
 
-    # Split data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Get user input
+input_df = user_input_features()
 
-    # Identify categorical features (features containing 'Biscoe' or other non-numeric values)
-    categorical_features = X_train.select_dtypes(include=['object']).columns.tolist()
+# Make predictions based on the input
+prediction = model.predict(input_df)
 
-    # Create a pipeline with an encoder for categorical features
-    model = Pipeline(steps=[
-        ('encoder', ce.OrdinalEncoder(cols=categorical_features)),  # Encode categorical features
-        ('scaler', StandardScaler()), 
-        ('classifier', RandomForestClassifier(n_estimators=100, random_state=42))
-    ])
-
-    # Train the model
-    model.fit(X_train, y_train)
-
-    # Save the model
-    with open('model_penguin_66130701701.pkl', 'wb') as file:
-        pickle.dump(model, file)
-
-    # Model inference section
-    st.subheader("Make Predictions")
-
-    # Input fields for new data
-    input_data = {}
-    for column in X.columns:
-        input_data[column] = st.text_input(f"Enter {column}", "")
-
-    if st.button("Predict"):
-        # Convert the input data into a DataFrame for prediction
-        input_df = pd.DataFrame([input_data])
-        
-        # Predict the species
-        prediction = model.predict(input_df)
-
-        st.write(f"The predicted species is: {prediction[0]}")
+# Display the prediction result
+st.write(f'Predicted species: {prediction[0]}')
