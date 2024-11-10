@@ -2,9 +2,7 @@ import streamlit as st
 import pandas as pd
 import pickle
 import category_encoders as ce
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 
 # Load the pre-trained model
@@ -38,8 +36,20 @@ def user_input_features():
 # Get user input
 input_df = user_input_features()
 
-# Make predictions based on the input
-prediction = model.predict(input_df)
+# Preprocessing: Apply categorical encoding and scaling
+# Encoder for categorical variables (based on your model)
+encoder = ce.OrdinalEncoder(cols=['island', 'sex'])
+
+# Apply the encoder
+input_df_encoded = encoder.fit_transform(input_df)
+
+# Scale the numerical features (based on your model's training process)
+scaler = StandardScaler()
+numerical_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g']
+input_df_encoded[numerical_columns] = scaler.fit_transform(input_df_encoded[numerical_columns])
+
+# Make predictions based on the preprocessed input
+prediction = model.predict(input_df_encoded)
 
 # Display the prediction result
 st.write(f'Predicted species: {prediction[0]}')
