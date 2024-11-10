@@ -27,7 +27,10 @@ def user_input_features():
         'flipper_length_mm': [flipper_length_mm],
         'body_mass_g': [body_mass_g],
         'island': [island],
-        'sex': [sex]
+        'sex': [sex],
+        # Add missing features if needed, e.g., culmen_length_mm, culmen_depth_mm, etc.
+        'culmen_length_mm': [None],  # Or provide a default value
+        'culmen_depth_mm': [None]    # Or provide a default value
     })
 
     return input_data
@@ -36,10 +39,9 @@ def user_input_features():
 input_df = user_input_features()
 
 # Ensure that the columns match the model's training data
-# You might want to ensure that the columns required for prediction are present
-required_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g', 'island', 'sex']
+required_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g', 'island', 'sex', 'culmen_length_mm', 'culmen_depth_mm']
 
-# Fill missing columns with NaN or 0 if they are not required for your current model
+# Fill missing columns with NaN or default values if required for your model
 input_df = input_df[required_columns]
 
 # Preprocessing: Apply categorical encoding and scaling
@@ -51,7 +53,7 @@ input_df_encoded = encoder.fit_transform(input_df)
 
 # Scale the numerical features (based on your model's training process)
 scaler = StandardScaler()
-numerical_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g']
+numerical_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g', 'culmen_length_mm', 'culmen_depth_mm']
 input_df_encoded[numerical_columns] = scaler.fit_transform(input_df_encoded[numerical_columns])
 
 # Make predictions based on the preprocessed input
