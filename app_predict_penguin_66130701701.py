@@ -3,7 +3,6 @@ import pandas as pd
 import pickle
 import category_encoders as ce
 from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline
 
 # Load the pre-trained model
 with open('model_penguin_66130701701.pkl', 'rb') as file:
@@ -35,6 +34,13 @@ def user_input_features():
 
 # Get user input
 input_df = user_input_features()
+
+# Ensure that the columns match the model's training data
+# You might want to ensure that the columns required for prediction are present
+required_columns = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g', 'island', 'sex']
+
+# Fill missing columns with NaN or 0 if they are not required for your current model
+input_df = input_df[required_columns]
 
 # Preprocessing: Apply categorical encoding and scaling
 # Encoder for categorical variables (based on your model)
