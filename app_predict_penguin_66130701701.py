@@ -15,10 +15,10 @@ with open('model_penguin_66130701701.pkl', 'rb') as file:
 def predict_penguin_species(culmen_length, culmen_depth, flipper_length, body_mass, island, sex):
     # Create a DataFrame for the input data
     input_data = pd.DataFrame({
-        'culmen_length_mm': [culmen_length],
-        'culmen_depth_mm': [culmen_depth],
-        'flipper_length_mm': [flipper_length],
-        'body_mass_g': [body_mass],
+        'culmen_length_mm': [culmen_length_mm],
+        'culmen_depth_mm': [culmen_depth_mm],
+        'flipper_length_mm': [flipper_length_mm],
+        'body_mass_g': [body_mass_g],
         'island': [island],
         'sex': [sex]
     })
