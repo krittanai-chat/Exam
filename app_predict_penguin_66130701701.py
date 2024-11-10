@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import pickle
@@ -40,7 +39,11 @@ input_df = user_input_features()
 required_columns = ['culmen_length_mm', 'culmen_depth_mm', 'flipper_length_mm', 'body_mass_g', 'island', 'sex']
 input_df = input_df[required_columns]  # Ensure only the expected columns are included
 
-# Preprocessing: Apply categorical encoding
+# Reorder columns to match the order used in the model training
+# (Make sure you know the exact order from your model training process)
+input_df = input_df[['culmen_length_mm', 'culmen_depth_mm', 'flipper_length_mm', 'body_mass_g', 'island', 'sex']]
+
+# Preprocessing: Apply categorical encoding (ensure encoding matches the model's expected encoding method)
 encoder = ce.OrdinalEncoder(cols=['island', 'sex'])
 input_df_encoded = encoder.fit_transform(input_df)  # Transform the data using the encoder
 
@@ -57,4 +60,3 @@ prediction = model.predict(input_df_encoded)
 
 # Display the prediction result
 st.write(f'Predicted species: {prediction[0]}')
-
